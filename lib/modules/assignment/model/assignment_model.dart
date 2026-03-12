@@ -1,0 +1,110 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'assignment_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class Customer {
+  final int id;
+  final String name;
+  final String phone;
+  final String? address;
+
+  const Customer({
+    required this.id,
+    required this.name,
+    required this.phone,
+    this.address,
+  });
+
+  factory Customer.fromJson(Map<String, dynamic> json) =>
+      _$CustomerFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CustomerToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class Status {
+  final int id;
+  final String name;
+
+  const Status({required this.id, required this.name});
+
+  factory Status.fromJson(Map<String, dynamic> json) => _$StatusFromJson(json);
+
+  Map<String, dynamic> toJson() => _$StatusToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class AssignedUser {
+  final int id;
+  final String name;
+  final String email;
+
+  const AssignedUser({
+    required this.id,
+    required this.name,
+    required this.email,
+  });
+
+  factory AssignedUser.fromJson(Map<String, dynamic> json) =>
+      _$AssignedUserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AssignedUserToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class Assignment {
+  final int id;
+  final int adminId;
+  final int technicianId;
+  final int customerId;
+  final int statusId;
+  final String descriptionByAdmin;
+  final double? latCheckIn;
+  final double? lngCheckIn;
+  final String? checkInPhotoPath;
+  final String? checkOutPhotoPath;
+  final double? latCheckOut;
+  final double? lngCheckOut;
+  final String? descriptionByTechnician;
+  final int? rating;
+  final String? reviewByAdmin;
+  final String? completedAt;
+  final String? closedAt;
+
+  // Relasi (eager loaded dari API)
+  final Customer? customer;
+  final Status? status;
+  final AssignedUser? technician;
+
+  const Assignment({
+    required this.id,
+    required this.adminId,
+    required this.technicianId,
+    required this.customerId,
+    required this.statusId,
+    required this.descriptionByAdmin,
+    this.latCheckIn,
+    this.lngCheckIn,
+    this.checkInPhotoPath,
+    this.checkOutPhotoPath,
+    this.latCheckOut,
+    this.lngCheckOut,
+    this.descriptionByTechnician,
+    this.rating,
+    this.reviewByAdmin,
+    this.completedAt,
+    this.closedAt,
+    this.customer,
+    this.status,
+    this.technician,
+  });
+
+  factory Assignment.fromJson(Map<String, dynamic> json) =>
+      _$AssignmentFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AssignmentToJson(this);
+
+  /// Nama status (lowercase) untuk filter stat card
+  String get statusName => status?.name.toLowerCase() ?? '';
+}
