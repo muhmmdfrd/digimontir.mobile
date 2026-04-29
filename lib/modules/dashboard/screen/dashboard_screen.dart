@@ -239,7 +239,7 @@ class _RecentActivityCard extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
         ),
         subtitle: Text(
-          assignment.descriptionByAdmin,
+          assignment.descriptionByAdmin ?? "-",
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 12, color: Colors.grey),

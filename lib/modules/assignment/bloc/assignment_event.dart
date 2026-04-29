@@ -7,9 +7,15 @@ abstract class AssignmentEvent extends Equatable {
 }
 
 class AssignmentLoadRequested extends AssignmentEvent {
-  const AssignmentLoadRequested();
+  final String? tab;
+  const AssignmentLoadRequested({this.tab});
+  @override
+  List<Object?> get props => [tab];
 }
 
 class AssignmentRefreshRequested extends AssignmentEvent {
-  const AssignmentRefreshRequested();
+  final String? tab;
+  const AssignmentRefreshRequested({this.tab});
+  @override
+  List<Object?> get props => [tab];
 }

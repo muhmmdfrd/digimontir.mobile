@@ -52,19 +52,33 @@ class AssignedUser {
   Map<String, dynamic> toJson() => _$AssignedUserToJson(this);
 }
 
+double? _stringToDouble(dynamic value) {
+  if (value == null) return null;
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  if (value is String) return double.tryParse(value);
+  return null;
+}
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Assignment {
   final int id;
-  final int adminId;
-  final int technicianId;
-  final int customerId;
-  final int statusId;
-  final String descriptionByAdmin;
+  final int? adminId;
+  final int? technicianId;
+  final int? customerId;
+  final int? statusId;
+  final String? descriptionByAdmin;
+  @JsonKey(fromJson: _stringToDouble)
   final double? latCheckIn;
+  @JsonKey(fromJson: _stringToDouble)
   final double? lngCheckIn;
+  @JsonKey(name: 'check_in_photo_url')
   final String? checkInPhotoPath;
+  @JsonKey(name: 'check_out_photo_url')
   final String? checkOutPhotoPath;
+  @JsonKey(fromJson: _stringToDouble)
   final double? latCheckOut;
+  @JsonKey(fromJson: _stringToDouble)
   final double? lngCheckOut;
   final String? descriptionByTechnician;
   final int? rating;
@@ -79,11 +93,11 @@ class Assignment {
 
   const Assignment({
     required this.id,
-    required this.adminId,
-    required this.technicianId,
-    required this.customerId,
-    required this.statusId,
-    required this.descriptionByAdmin,
+    this.adminId,
+    this.technicianId,
+    this.customerId,
+    this.statusId,
+    this.descriptionByAdmin,
     this.latCheckIn,
     this.lngCheckIn,
     this.checkInPhotoPath,

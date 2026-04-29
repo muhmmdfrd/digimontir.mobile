@@ -19,7 +19,13 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
   ) async {
     emit(const AssignmentLoading());
     try {
-      final assignments = await _service.getAssignments();
+      String? tab;
+      if (event is AssignmentLoadRequested) {
+        tab = event.tab;
+      } else if (event is AssignmentRefreshRequested) {
+        tab = event.tab;
+      }
+      final assignments = await _service.getAssignments(tab: tab);
       emit(AssignmentLoaded(assignments));
     } catch (e) {
       emit(AssignmentError(e.toString()));

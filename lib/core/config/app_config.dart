@@ -2,7 +2,7 @@ class AppConfig {
   AppConfig._();
 
   // Base URL API — ubah sesuai environment
-  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  static const String baseUrl = 'https://digimontir.ngeproject.my.id/api';
 
   // Timeout dalam milidetik
   static const int connectTimeout = 15000;
