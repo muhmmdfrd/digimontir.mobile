@@ -11,6 +11,8 @@ Customer _$CustomerFromJson(Map<String, dynamic> json) => Customer(
   name: json['name'] as String,
   phone: json['phone'] as String,
   address: json['address'] as String?,
+  latitude: _stringToDouble(json['latitude']),
+  longitude: _stringToDouble(json['longitude']),
 );
 
 Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
@@ -18,6 +20,8 @@ Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
   'name': instance.name,
   'phone': instance.phone,
   'address': instance.address,
+  'latitude': instance.latitude,
+  'longitude': instance.longitude,
 };
 
 Status _$StatusFromJson(Map<String, dynamic> json) =>

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/theme/app_theme.dart';
 import '../bloc/assignment_bloc.dart';
@@ -72,6 +74,29 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
     try {
       final position = await _determinePosition();
       if (position == null) return;
+
+      // Validate 50m radius if customer has coordinates
+      if (_assignment.customer?.latitude != null && _assignment.customer?.longitude != null) {
+        final distance = Geolocator.distanceBetween(
+          position.latitude,
+          position.longitude,
+          _assignment.customer!.latitude!,
+          _assignment.customer!.longitude!,
+        );
+
+        if (distance > 50) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Anda berada di luar radius 50m (${distance.toStringAsFixed(1)}m). Jarak Anda terlalu jauh untuk melakukan Check-In.',
+                ),
+              ),
+            );
+          }
+          return;
+        }
+      }
 
       final picker = ImagePicker();
       final photo = await picker.pickImage(source: ImageSource.camera, imageQuality: 70);
@@ -146,6 +171,29 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
       final position = await _determinePosition();
       if (position == null) return;
 
+      // Validasi 50m juga saat check-out untuk memastikan teknisi masih di lokasi
+      if (_assignment.customer?.latitude != null && _assignment.customer?.longitude != null) {
+        final distance = Geolocator.distanceBetween(
+          position.latitude,
+          position.longitude,
+          _assignment.customer!.latitude!,
+          _assignment.customer!.longitude!,
+        );
+
+        if (distance > 50) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Anda berada di luar radius 50m (${distance.toStringAsFixed(1)}m). Silakan kembali ke lokasi pekerjaan.',
+                ),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
       final picker = ImagePicker();
       final photo = await picker.pickImage(source: ImageSource.camera, imageQuality: 70);
       if (photo == null) return;
@@ -194,6 +242,9 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildInfoCard(),
+                const SizedBox(height: 16),
+                if (_assignment.customer?.latitude != null && _assignment.customer?.longitude != null)
+                  _buildMap(_assignment.customer!.latitude!, _assignment.customer!.longitude!),
                 const SizedBox(height: 24),
                 if (isCompleted) ...[
                   const Center(
@@ -238,6 +289,48 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
     );
   }
 
+  Widget _buildMap(double lat, double lng) {
+    return Container(
+      height: 250,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: FlutterMap(
+        options: MapOptions(initialCenter: LatLng(lat, lng), initialZoom: 17.0),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: 'com.digimontir.mobile',
+          ),
+          CircleLayer(
+            circles: [
+              CircleMarker(
+                point: LatLng(lat, lng),
+                color: Colors.blue.withValues(alpha: 0.2),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 1.5,
+                useRadiusInMeter: true,
+                radius: 50, // 50 meters
+              ),
+            ],
+          ),
+          MarkerLayer(
+            markers: [
+              Marker(
+                point: LatLng(lat, lng),
+                width: 40,
+                height: 40,
+                child: const Icon(Icons.location_on, color: Colors.red, size: 40),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildInfoCard() {
     return Card(
       elevation: 2,
@@ -253,6 +346,8 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
             ),
             const SizedBox(height: 8),
             Text('Status: ${_assignment.status?.name ?? '-'}'),
+            const SizedBox(height: 8),
+            Text('Alamat: ${_assignment.customer?.address ?? '-'}'),
             const SizedBox(height: 8),
             Text('Deskripsi: ${_assignment.descriptionByAdmin ?? '-'}'),
             if (_assignment.descriptionByTechnician != null) ...[

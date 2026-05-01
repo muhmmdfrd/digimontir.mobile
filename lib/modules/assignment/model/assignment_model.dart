@@ -8,12 +8,18 @@ class Customer {
   final String name;
   final String phone;
   final String? address;
+  @JsonKey(fromJson: _stringToDouble)
+  final double? latitude;
+  @JsonKey(fromJson: _stringToDouble)
+  final double? longitude;
 
   const Customer({
     required this.id,
     required this.name,
     required this.phone,
     this.address,
+    this.latitude,
+    this.longitude,
   });
 
   factory Customer.fromJson(Map<String, dynamic> json) =>
