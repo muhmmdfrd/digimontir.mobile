@@ -5,6 +5,7 @@ import '../../assignment/bloc/assignment_bloc.dart';
 import '../../assignment/bloc/assignment_event.dart';
 import '../../assignment/bloc/assignment_state.dart';
 import '../../assignment/model/assignment_model.dart';
+import '../../assignment/screen/assignment_detail_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -23,7 +24,9 @@ class DashboardScreen extends StatelessWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          context.read<AssignmentBloc>().add(const AssignmentRefreshRequested());
+          context.read<AssignmentBloc>().add(
+            const AssignmentRefreshRequested(),
+          );
           await Future.delayed(const Duration(milliseconds: 600));
         },
         child: BlocBuilder<AssignmentBloc, AssignmentState>(
@@ -42,14 +45,24 @@ class DashboardScreen extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.wifi_off_rounded, size: 56, color: Colors.grey),
+                            const Icon(
+                              Icons.wifi_off_rounded,
+                              size: 56,
+                              color: Colors.grey,
+                            ),
                             const SizedBox(height: 16),
                             const Text(
                               'Gagal memuat data',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             const SizedBox(height: 6),
-                            const Text('Tarik ke bawah untuk mencoba lagi', style: TextStyle(color: Colors.grey)),
+                            const Text(
+                              'Tarik ke bawah untuk mencoba lagi',
+                              style: TextStyle(color: Colors.grey),
+                            ),
                           ],
                         ),
                       ),
@@ -81,46 +94,57 @@ class DashboardScreen extends StatelessWidget {
       children: [
         const Text(
           'Statistik Pekerjaan',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.onSurfaceColor),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.onSurfaceColor,
+          ),
         ),
         const SizedBox(height: 12),
-        GridView.count(
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 1.4,
-          children: [
-            _StatCard(
-              label: 'Di-assign',
-              count: state.assignedCount,
-              icon: Icons.assignment_ind_outlined,
-              color: const Color(0xFF1A73E8),
-              bgColor: const Color(0xFFE8F0FE),
-            ),
-            _StatCard(
-              label: 'Proses',
-              count: state.inProgressCount,
-              icon: Icons.autorenew,
-              color: const Color(0xFFF9AB00),
-              bgColor: const Color(0xFFFEF8E1),
-            ),
-            _StatCard(
-              label: 'Selesai',
-              count: state.completedCount,
-              icon: Icons.check_circle_outline,
-              color: const Color(0xFF34A853),
-              bgColor: const Color(0xFFE6F4EA),
-            ),
-            _StatCard(
-              label: 'Closed',
-              count: state.closedCount,
-              icon: Icons.lock_outline,
-              color: const Color(0xFF9AA0A6),
-              bgColor: const Color(0xFFF1F3F4),
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final crossAxisCount = constraints.maxWidth >= 720 ? 4 : 2;
+            return GridView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                mainAxisExtent: 132,
+              ),
+              children: [
+                _StatCard(
+                  label: 'Di-assign',
+                  count: state.assignedCount,
+                  icon: Icons.assignment_ind_outlined,
+                  color: const Color(0xFF1A73E8),
+                  bgColor: const Color(0xFFE8F0FE),
+                ),
+                _StatCard(
+                  label: 'Check-in',
+                  count: state.inProgressCount,
+                  icon: Icons.autorenew,
+                  color: const Color(0xFFF9AB00),
+                  bgColor: const Color(0xFFFEF8E1),
+                ),
+                _StatCard(
+                  label: 'Menunggu Review',
+                  count: state.completedCount,
+                  icon: Icons.check_circle_outline,
+                  color: const Color(0xFF34A853),
+                  bgColor: const Color(0xFFE6F4EA),
+                ),
+                _StatCard(
+                  label: 'Closed',
+                  count: state.closedCount,
+                  icon: Icons.lock_outline,
+                  color: const Color(0xFF9AA0A6),
+                  bgColor: const Color(0xFFF1F3F4),
+                ),
+              ],
+            );
+          },
         ),
       ],
     );
@@ -132,14 +156,21 @@ class DashboardScreen extends StatelessWidget {
       children: [
         const Text(
           'Aktivitas Terbaru',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.onSurfaceColor),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.onSurfaceColor,
+          ),
         ),
         const SizedBox(height: 12),
         if (recent.isEmpty)
           const Center(
             child: Padding(
               padding: EdgeInsets.all(24),
-              child: Text('Belum ada aktivitas', style: TextStyle(color: Colors.grey)),
+              child: Text(
+                'Belum ada aktivitas',
+                style: TextStyle(color: Colors.grey),
+              ),
             ),
           )
         else
@@ -170,7 +201,13 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -179,7 +216,10 @@ class _StatCard extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Icon(icon, color: color, size: 20),
           ),
           Column(
@@ -187,9 +227,20 @@ class _StatCard extends StatelessWidget {
             children: [
               Text(
                 '$count',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: color),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
-              Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
             ],
           ),
         ],
@@ -204,11 +255,24 @@ class _RecentActivityCard extends StatelessWidget {
   const _RecentActivityCard({required this.assignment});
 
   Color get _statusColor {
+    switch (assignment.statusCode) {
+      case 'ASGN':
+        return const Color(0xFF1A73E8);
+      case 'CKIN':
+        return const Color(0xFFF9AB00);
+      case 'WREV':
+        return const Color(0xFF34A853);
+      case 'CLOS':
+        return const Color(0xFF9AA0A6);
+    }
+
     switch (assignment.statusName) {
       case 'assigned':
         return const Color(0xFF1A73E8);
       case 'in_progress':
       case 'in progress':
+      case 'checked-in':
+      case 'checked in':
         return const Color(0xFFF9AB00);
       case 'completed':
         return const Color(0xFF34A853);
@@ -221,38 +285,105 @@ class _RecentActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Material(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6, offset: const Offset(0, 2))],
+        elevation: 0,
+        shadowColor: Colors.black.withValues(alpha: 0.05),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () async {
+            final assignmentBloc = context.read<AssignmentBloc>();
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BlocProvider.value(
+                  value: assignmentBloc,
+                  child: AssignmentDetailScreen(assignment: assignment),
+                ),
+              ),
+            );
+            if (context.mounted) {
+              assignmentBloc.add(const AssignmentRefreshRequested());
+            }
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
+              leading: CircleAvatar(
+                backgroundColor: _statusColor.withValues(alpha: 0.12),
+                child: Icon(
+                  Icons.build_circle_outlined,
+                  color: _statusColor,
+                  size: 22,
+                ),
+              ),
+              title: Text(
+                assignment.customer?.name ??
+                    'Customer #${assignment.customerId}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              subtitle: Text(
+                assignment.descriptionByAdmin ?? "-",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              trailing: _StatusBadge(
+                label: assignment.status?.name ?? '-',
+                color: _statusColor,
+              ),
+            ),
+          ),
+        ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: CircleAvatar(
-          backgroundColor: _statusColor.withValues(alpha: 0.12),
-          child: Icon(Icons.build_circle_outlined, color: _statusColor, size: 22),
+    );
+  }
+}
+
+class _StatusBadge extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _StatusBadge({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 110),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(20),
         ),
-        title: Text(
-          assignment.customer?.name ?? 'Customer #${assignment.customerId}',
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
-        subtitle: Text(
-          assignment.descriptionByAdmin ?? "-",
+        child: Text(
+          label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
-        ),
-        trailing: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: _statusColor.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            assignment.status?.name ?? '-',
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _statusColor),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: color,
           ),
         ),
       ),

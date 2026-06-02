@@ -13,4 +13,12 @@ class AppConfig {
 
   // Nama app
   static const String appName = 'Digimontir';
+
+  // Radius lokasi kerja untuk proses check-in/check-out dalam meter
+  static const double assignmentCheckRadiusMeters = 50;
+
+  // Batas upload foto mengikuti validasi Laravel: image|max:5120 (5 MB)
+  static const int assignmentPhotoMaxUploadBytes = 5 * 1024 * 1024;
+  static const double assignmentPhotoMaxDimension = 1280;
+  static const int assignmentPhotoQuality = 45;
 }

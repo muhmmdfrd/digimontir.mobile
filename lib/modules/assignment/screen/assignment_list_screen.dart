@@ -74,7 +74,9 @@ class _AssignmentListScreenState extends State<AssignmentListScreen> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
-                context.read<AssignmentBloc>().add(AssignmentRefreshRequested(tab: _selectedTab));
+                context.read<AssignmentBloc>().add(
+                  AssignmentRefreshRequested(tab: _selectedTab),
+                );
                 await Future.delayed(const Duration(milliseconds: 600));
               },
               child: BlocBuilder<AssignmentBloc, AssignmentState>(
@@ -94,14 +96,24 @@ class _AssignmentListScreenState extends State<AssignmentListScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(Icons.wifi_off_rounded, size: 56, color: Colors.grey),
+                                  const Icon(
+                                    Icons.wifi_off_rounded,
+                                    size: 56,
+                                    color: Colors.grey,
+                                  ),
                                   const SizedBox(height: 16),
                                   const Text(
                                     'Gagal memuat data',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                   const SizedBox(height: 6),
-                                  const Text('Tarik ke bawah untuk mencoba lagi', style: TextStyle(color: Colors.grey)),
+                                  const Text(
+                                    'Tarik ke bawah untuk mencoba lagi',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
                                 ],
                               ),
                             ),
@@ -120,9 +132,16 @@ class _AssignmentListScreenState extends State<AssignmentListScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.assignment_outlined, size: 64, color: Colors.grey),
+                                  Icon(
+                                    Icons.assignment_outlined,
+                                    size: 64,
+                                    color: Colors.grey,
+                                  ),
                                   SizedBox(height: 12),
-                                  Text('Belum ada pekerjaan', style: TextStyle(color: Colors.grey)),
+                                  Text(
+                                    'Belum ada pekerjaan',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
                                 ],
                               ),
                             ),
@@ -134,7 +153,8 @@ class _AssignmentListScreenState extends State<AssignmentListScreen> {
                       padding: const EdgeInsets.all(16),
                       itemCount: state.assignments.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 10),
-                      itemBuilder: (_, i) => _AssignmentCard(assignment: state.assignments[i]),
+                      itemBuilder: (_, i) =>
+                          _AssignmentCard(assignment: state.assignments[i]),
                     );
                   }
                   return const SizedBox.shrink();
@@ -189,9 +209,15 @@ class _AssignmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        final assignmentBloc = context.read<AssignmentBloc>();
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AssignmentDetailScreen(assignment: assignment)),
+          MaterialPageRoute(
+            builder: (context) => BlocProvider.value(
+              value: assignmentBloc,
+              child: AssignmentDetailScreen(assignment: assignment),
+            ),
+          ),
         );
       },
       borderRadius: BorderRadius.circular(16),
@@ -200,7 +226,11 @@ class _AssignmentCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2)),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
           ],
         ),
         child: Padding(
@@ -213,12 +243,19 @@ class _AssignmentCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      assignment.customer?.name ?? 'Customer #${assignment.customerId}',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                      assignment.customer?.name ??
+                          'Customer #${assignment.customerId}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: _statusColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
@@ -230,7 +267,11 @@ class _AssignmentCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           assignment.status?.name ?? '-',
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _statusColor),
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: _statusColor,
+                          ),
                         ),
                       ],
                     ),
@@ -253,18 +294,30 @@ class _AssignmentCard extends StatelessWidget {
               // Footer info
               Row(
                 children: [
-                  const Icon(Icons.person_outline, size: 14, color: Colors.grey),
+                  Icon(
+                    assignment.scheduledDate == null
+                        ? Icons.person_outline
+                        : Icons.event_outlined,
+                    size: 14,
+                    color: Colors.grey,
+                  ),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      assignment.technician?.name ?? 'Teknisi #${assignment.technicianId}',
+                      assignment.scheduledDate == null
+                          ? (assignment.technician?.name ??
+                                'Teknisi #${assignment.technicianId}')
+                          : 'Jadwal ${_formatDate(assignment.scheduledDate!)}',
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ),
                   if (assignment.rating != null) ...[
                     const Icon(Icons.star, size: 14, color: Color(0xFFF9AB00)),
                     const SizedBox(width: 2),
-                    Text('${assignment.rating}/5', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    Text(
+                      '${assignment.rating}/5',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                   ],
                   if (assignment.completedAt != null) ...[
                     const SizedBox(width: 8),
@@ -272,7 +325,10 @@ class _AssignmentCard extends StatelessWidget {
                     const SizedBox(width: 2),
                     Text(
                       _formatDate(assignment.completedAt!),
-                      style: const TextStyle(fontSize: 12, color: Color(0xFF34A853)),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF34A853),
+                      ),
                     ),
                   ],
                 ],

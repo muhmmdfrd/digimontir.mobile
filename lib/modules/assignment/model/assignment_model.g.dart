@@ -24,12 +24,16 @@ Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
   'longitude': instance.longitude,
 };
 
-Status _$StatusFromJson(Map<String, dynamic> json) =>
-    Status(id: (json['id'] as num).toInt(), name: json['name'] as String);
+Status _$StatusFromJson(Map<String, dynamic> json) => Status(
+  id: (json['id'] as num).toInt(),
+  name: json['name'] as String,
+  code: json['code'] as String?,
+);
 
 Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
+  'code': instance.code,
 };
 
 AssignedUser _$AssignedUserFromJson(Map<String, dynamic> json) => AssignedUser(
@@ -54,8 +58,10 @@ Assignment _$AssignmentFromJson(Map<String, dynamic> json) => Assignment(
   descriptionByAdmin: json['description_by_admin'] as String?,
   latCheckIn: _stringToDouble(json['lat_check_in']),
   lngCheckIn: _stringToDouble(json['lng_check_in']),
-  checkInPhotoPath: json['check_in_photo_url'] as String?,
-  checkOutPhotoPath: json['check_out_photo_url'] as String?,
+  checkInPhotoPath:
+      _readCheckInPhotoPath(json, 'check_in_photo_path') as String?,
+  checkOutPhotoPath:
+      _readCheckOutPhotoPath(json, 'check_out_photo_path') as String?,
   latCheckOut: _stringToDouble(json['lat_check_out']),
   lngCheckOut: _stringToDouble(json['lng_check_out']),
   descriptionByTechnician: json['description_by_technician'] as String?,
@@ -63,6 +69,7 @@ Assignment _$AssignmentFromJson(Map<String, dynamic> json) => Assignment(
   reviewByAdmin: json['review_by_admin'] as String?,
   completedAt: json['completed_at'] as String?,
   closedAt: json['closed_at'] as String?,
+  scheduledDate: json['scheduled_date'] as String?,
   customer: json['customer'] == null
       ? null
       : Customer.fromJson(json['customer'] as Map<String, dynamic>),
@@ -84,8 +91,8 @@ Map<String, dynamic> _$AssignmentToJson(Assignment instance) =>
       'description_by_admin': instance.descriptionByAdmin,
       'lat_check_in': instance.latCheckIn,
       'lng_check_in': instance.lngCheckIn,
-      'check_in_photo_url': instance.checkInPhotoPath,
-      'check_out_photo_url': instance.checkOutPhotoPath,
+      'check_in_photo_path': instance.checkInPhotoPath,
+      'check_out_photo_path': instance.checkOutPhotoPath,
       'lat_check_out': instance.latCheckOut,
       'lng_check_out': instance.lngCheckOut,
       'description_by_technician': instance.descriptionByTechnician,
@@ -93,6 +100,7 @@ Map<String, dynamic> _$AssignmentToJson(Assignment instance) =>
       'review_by_admin': instance.reviewByAdmin,
       'completed_at': instance.completedAt,
       'closed_at': instance.closedAt,
+      'scheduled_date': instance.scheduledDate,
       'customer': instance.customer,
       'status': instance.status,
       'technician': instance.technician,

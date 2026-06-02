@@ -22,14 +22,25 @@ class AssignmentLoaded extends AssignmentState {
   @override
   List<Object?> get props => [assignments];
 
-  int get assignedCount =>
-      assignments.where((a) => a.statusName == 'assigned').length;
-  int get inProgressCount =>
-      assignments.where((a) => a.statusName == 'in_progress' || a.statusName == 'in progress').length;
-  int get completedCount =>
-      assignments.where((a) => a.statusName == 'completed').length;
-  int get closedCount =>
-      assignments.where((a) => a.statusName == 'closed').length;
+  int get assignedCount => assignments
+      .where((a) => a.statusName == 'assigned' || a.statusCode == 'ASGN')
+      .length;
+  int get inProgressCount => assignments
+      .where(
+        (a) =>
+            a.statusName == 'in_progress' ||
+            a.statusName == 'in progress' ||
+            a.statusName == 'checked-in' ||
+            a.statusName == 'checked in' ||
+            a.statusCode == 'CKIN',
+      )
+      .length;
+  int get completedCount => assignments
+      .where((a) => a.statusName == 'completed' || a.statusCode == 'WREV')
+      .length;
+  int get closedCount => assignments
+      .where((a) => a.statusName == 'closed' || a.statusCode == 'CLOS')
+      .length;
 
   List<Assignment> get recentActivity {
     final sorted = [...assignments]..sort((a, b) => b.id.compareTo(a.id));

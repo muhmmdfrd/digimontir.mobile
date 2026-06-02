@@ -32,8 +32,9 @@ class Customer {
 class Status {
   final int id;
   final String name;
+  final String? code;
 
-  const Status({required this.id, required this.name});
+  const Status({required this.id, required this.name, this.code});
 
   factory Status.fromJson(Map<String, dynamic> json) => _$StatusFromJson(json);
 
@@ -66,6 +67,14 @@ double? _stringToDouble(dynamic value) {
   return null;
 }
 
+Object? _readCheckInPhotoPath(Map<dynamic, dynamic> json, String key) {
+  return json[key] ?? json['check_in_photo_url'];
+}
+
+Object? _readCheckOutPhotoPath(Map<dynamic, dynamic> json, String key) {
+  return json[key] ?? json['check_out_photo_url'];
+}
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Assignment {
   final int id;
@@ -78,9 +87,9 @@ class Assignment {
   final double? latCheckIn;
   @JsonKey(fromJson: _stringToDouble)
   final double? lngCheckIn;
-  @JsonKey(name: 'check_in_photo_url')
+  @JsonKey(name: 'check_in_photo_path', readValue: _readCheckInPhotoPath)
   final String? checkInPhotoPath;
-  @JsonKey(name: 'check_out_photo_url')
+  @JsonKey(name: 'check_out_photo_path', readValue: _readCheckOutPhotoPath)
   final String? checkOutPhotoPath;
   @JsonKey(fromJson: _stringToDouble)
   final double? latCheckOut;
@@ -91,6 +100,7 @@ class Assignment {
   final String? reviewByAdmin;
   final String? completedAt;
   final String? closedAt;
+  final String? scheduledDate;
 
   // Relasi (eager loaded dari API)
   final Customer? customer;
@@ -115,6 +125,7 @@ class Assignment {
     this.reviewByAdmin,
     this.completedAt,
     this.closedAt,
+    this.scheduledDate,
     this.customer,
     this.status,
     this.technician,
@@ -127,4 +138,7 @@ class Assignment {
 
   /// Nama status (lowercase) untuk filter stat card
   String get statusName => status?.name.toLowerCase() ?? '';
+
+  /// Kode status dari backend, misalnya CKIN dan WREV.
+  String get statusCode => status?.code?.toUpperCase() ?? '';
 }
